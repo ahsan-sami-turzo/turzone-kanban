@@ -11,8 +11,8 @@
       />
       
       <div v-if="selectedProject" class="mt-8">
-        <h2 class="text-2xl font-bold mb-4">{{ selectedProject.name }} - Board</h2>
-        <p class="text-gray-600 mb-4">Kanban board will appear here in the next step</p>
+        <h2 class="text-2xl font-bold mb-4">{{ selectedProject.name }}</h2>
+        <Board :project-id="selectedProject.id" />
       </div>
     </div>
   </div>
@@ -22,12 +22,12 @@
 import { ref } from 'vue';
 import FileUpload from './components/FileUpload.vue';
 import ProjectList from './components/ProjectList.vue';
+import Board from './components/Board.vue';
 
 const projectListRef = ref(null);
 const selectedProject = ref(null);
 
 const handleUploadSuccess = () => {
-  // Reload projects after successful upload
   projectListRef.value?.loadProjects();
 };
 
