@@ -1,0 +1,20 @@
+{
+  "name": "turzone-kanban-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^2.4.5",
+    "svelte": "^4.2.7",
+    "vite": "^4.4.5"
+  },
+  "dependencies": {
+    "axios": "^1.5.0"
+  }
+}

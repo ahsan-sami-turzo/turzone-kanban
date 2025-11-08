@@ -179,3 +179,72 @@ vite.config.ts.timestamp-*
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+
+### SVELTE
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Cache
+.vite
+.svelte-kit
+.cache/
+.nyc_output/
+coverage/
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.old
+*.orig
+# Test files
+*.test.js
+*.spec.js
+*.test.ts
+*.spec.ts
+*.test.jsx
+*.spec.jsx
+*.test.tsx
+*.spec.tsx
+__tests__/
+__mocks__/
+*.snap
+# Storybook
+.out/
+storybook-static/
+.node_modules_storybook/
+# Misc
+*.seed
+*.pid
+*.pid.lock
+pids
+logs/
+*.seed
+*.pid
+*.pid.lock
+pids/
+logs/

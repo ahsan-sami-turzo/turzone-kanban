@@ -1,7 +1,7 @@
 {
-  "name": "frontend",
+  "name": "turzone-kanban-frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "axios": "^1.13.2",
+    "date-fns": "^4.1.0",
+    "naive-ui": "^2.43.1",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3",
     "vuedraggable": "^4.1.0"

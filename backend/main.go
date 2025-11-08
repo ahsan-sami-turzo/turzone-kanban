@@ -45,6 +45,11 @@ func main() {
 		api.DELETE("/tasks/:id", handlers.DeleteTask)
 	}
 
+	// Health check
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
+
 	// Serve embedded frontend
 	distFS, err := fs.Sub(frontendFS, "frontend/dist")
 	if err != nil {

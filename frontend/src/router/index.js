@@ -1,23 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import Dashboard from '../views/Dashboard.vue';
-import ProjectView from '../views/ProjectView.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import Dashboard from '../views/Dashboard.vue'
+import Upload from '../views/Upload.vue'
+import Project from '../views/Project.vue'
 
 const routes = [
-  {
-    path: '/',
-    name: 'Dashboard',
-    component: Dashboard,
-  },
-  {
-    path: '/project/:id',
-    name: 'ProjectView',
-    component: ProjectView,
-  },
-];
+  { path: '/', component: Dashboard },
+  { path: '/upload', component: Upload },
+  { path: '/project/:id', component: Project },
+]
 
-const router = createRouter({
+export default createRouter({
   history: createWebHistory(),
   routes,
-});
-
-export default router;
+})

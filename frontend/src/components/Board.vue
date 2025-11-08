@@ -1,62 +1,14 @@
 <template>
-  <div>
-    <div v-if="loading" class="flex items-center justify-center py-16">
-      <svg class="animate-spin h-8 w-8 text-blue-500" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-      <span class="ml-3 text-gray-600">Loading tasks...</span>
-    </div>
-    
-    <div v-else-if="!projectId" class="text-center py-16 text-gray-500">
-      <svg class="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
-      <p class="text-lg">Select a project to view its board</p>
-    </div>
-    
-    <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-      Error loading tasks: {{ error }}
-    </div>
-    
-    <div v-else>
-      <div v-if="tasks.length === 0" class="text-center py-16 text-gray-500">
-        <p class="text-lg">No tasks in this project yet</p>
-        <p class="text-sm mt-2">Upload a markdown file to add tasks</p>
-      </div>
-      
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+  <div class="flex flex-col h-full">
+    <div v-if="!loading && projectId" 
+         class="flex-1 overflow-x-auto pb-4 -mx-4 sm:-mx-6 lg:-mx-8">
+      <div class="inline-flex space-x-6 h-full px-4 sm:px-6 lg:px-8">
         <Column
-          title="Waiting"
-          status="waiting"
-          :tasks="tasksByStatus.waiting"
-          @task-moved="handleTaskMoved"
-          @edit-task="openEditModal"
-          @delete-task="handleDeleteTask"
-        />
-        
-        <Column
-          title="In Progress"
-          status="in_progress"
-          :tasks="tasksByStatus.in_progress"
-          @task-moved="handleTaskMoved"
-          @edit-task="openEditModal"
-          @delete-task="handleDeleteTask"
-        />
-        
-        <Column
-          title="Testing"
-          status="testing"
-          :tasks="tasksByStatus.testing"
-          @task-moved="handleTaskMoved"
-          @edit-task="openEditModal"
-          @delete-task="handleDeleteTask"
-        />
-        
-        <Column
-          title="Completed"
-          status="completed"
-          :tasks="tasksByStatus.completed"
+          v-for="col in columnsWithTasks"
+          :key="col.status"
+          :title="col.title"
+          :status="col.status"
+          :tasks="col.tasks"
           @task-moved="handleTaskMoved"
           @edit-task="openEditModal"
           @delete-task="handleDeleteTask"
@@ -64,56 +16,55 @@
       </div>
     </div>
     
-    <!-- Edit Modal (same as before) -->
-    <div
-      v-if="editingTask"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    <div 
+      v-if="editingTask" 
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm transition-opacity" 
       @click.self="closeEditModal"
     >
-      <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
-        <h3 class="text-xl font-bold mb-4">Edit Task</h3>
-        
-        <div class="space-y-4">
+      <div class="bg-white rounded-xl p-8 shadow-2xl w-full max-w-lg transform transition-all duration-300 scale-100">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-2xl font-bold text-gray-800">Edit Task: {{ editingTask.title }}</h3>
+          <button @click="closeEditModal" class="text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <form @submit.prevent="saveEdit" class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Title
-            </label>
+            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
             <input
+              id="title"
               v-model="editForm.title"
-              type="text"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Task title"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+              required
             />
           </div>
-          
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea
+              id="description"
               v-model="editForm.description"
-              rows="6"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Task description..."
+              rows="4"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
             ></textarea>
           </div>
           
-          <div class="flex justify-end space-x-2 pt-4">
+          <div class="pt-4 flex justify-end space-x-3">
             <button
+              type="button"
               @click="closeEditModal"
-              class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
             <button
-              @click="saveEdit"
-              class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-              :disabled="!editForm.title.trim()"
+              type="submit"
+              class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
             >
               Save Changes
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>

@@ -1,15 +1,17 @@
 <template>
-  <div class="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-move border border-gray-100 hover:border-blue-200 transform hover:scale-[1.02]">
-    <div class="p-4">
-      <div class="flex items-start justify-between mb-3">
-        <h3 class="font-semibold text-gray-800 flex-1 pr-2 leading-snug">
+  <div 
+    class="group bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-200 border border-gray-100 hover:border-indigo-300 transform hover:scale-[1.01] cursor-grab active:cursor-grabbing"
+  >
+    <div class="p-3">
+      <div class="flex items-start justify-between mb-2">
+        <h3 class="font-medium text-gray-800 flex-1 pr-2 leading-snug">
           {{ task.title }}
         </h3>
         
-        <div class="flex-shrink-0 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div class="flex-shrink-0 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <button
             @click.stop="$emit('edit', task)"
-            class="p-1.5 hover:bg-blue-50 rounded-lg text-gray-400 hover:text-blue-600 transition-colors"
+            class="p-1.5 hover:bg-indigo-50 rounded-md text-gray-400 hover:text-indigo-600 transition-colors"
             title="Edit task"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -18,7 +20,7 @@
           </button>
           <button
             @click.stop="$emit('delete', task.id)"
-            class="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600 transition-colors"
+            class="p-1.5 hover:bg-red-50 rounded-md text-gray-400 hover:text-red-600 transition-colors"
             title="Delete task"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -28,19 +30,20 @@
         </div>
       </div>
       
-      <p v-if="task.description" class="text-sm text-gray-600 mb-3 line-clamp-3 leading-relaxed">
+      <p v-if="task.description" class="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">
         {{ task.description }}
       </p>
       
-      <div class="flex items-center justify-between pt-3 border-t border-gray-100">
-        <span class="inline-flex items-center px-2 py-1 bg-gray-100 rounded-md text-xs font-medium text-gray-600">
+      <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+        <span class="inline-flex items-center px-2 py-0.5 bg-gray-100 rounded-full text-xs font-medium text-gray-500">
           #{{ task.id }}
         </span>
         
         <div class="flex items-center text-xs text-gray-400">
           <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
+          {{ formatDate(task.created_at) }}
         </div>
       </div>
     </div>
@@ -48,21 +51,20 @@
 </template>
 
 <script setup>
-defineProps({
-  task: {
-    type: Object,
-    required: true,
-  },
-});
+  import { format } from 'date-fns';
+  import { computed } from 'vue';
 
-defineEmits(['edit', 'delete']);
+  const props = defineProps({
+    task: {
+      type: Object,
+      required: true,
+    },
+  });
+
+  defineEmits(['edit', 'delete']);
+
+  const formatDate = (dateString) => {
+    const options = { month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 </script>
-
-<style scoped>
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>
